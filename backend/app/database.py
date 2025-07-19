@@ -51,6 +51,6 @@ async def test_connection():
 
 def create_tables():
     print("Criando tabelas...")
-    from app.models import Base
-    Base.metadata.create_all(bind=sync_engine)
+    from app.models.user import User
+    Base.metadata.create_all(bind=sync_engine)  
     print("Tabelas criadas com sucesso!")
