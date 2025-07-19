@@ -15,6 +15,12 @@ class Cloud {
   }
   public setTokenUser(token?: string) {
     this.tokenUser = token ?? null;
+
+    if (token) {
+      Cookie.set("tokenUser", token, { expires: 1 });
+    } else {
+      Cookie.remove("tokenUser");
+    }
   }
 
   public get(
@@ -167,3 +173,6 @@ class Cloud {
       });
   }
 }
+
+const cloud = new Cloud();
+export default cloud;

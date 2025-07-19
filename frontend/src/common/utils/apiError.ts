@@ -1,4 +1,4 @@
-import type { ZodObject, ZodArray } from "zod/v4";
+import type { ZodObject, ZodArray } from "zod";
 import { $ZodError } from "zod/v4/core";
 import type { ApiError, Callback } from "@/common/schemas/types";
 
