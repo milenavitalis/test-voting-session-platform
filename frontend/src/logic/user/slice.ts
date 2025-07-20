@@ -11,9 +11,6 @@ const initialState: UserState = {
   user: {
     id: "",
     name: "",
-    cpf: "",
-    created_at: "",
-    updated_at: "",
   },
 };
 
@@ -31,9 +28,6 @@ const userSlice = createSlice({
       state.user = {
         id: "",
         name: "",
-        cpf: "",
-        created_at: "",
-        updated_at: "",
       };
     },
   },

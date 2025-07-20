@@ -10,12 +10,12 @@ function App() {
   const dispatch = useDispatch();
   const loadLogin = useSelector((state: RootState) => state.login.loadLogin);
   const token = useSelector((state: RootState) => state.login.token);
-
+  console.log("token", token);
   const router = createBrowserRouter(routes);
 
-  useEffect(() => {
-    loginByToken(() => {})(dispatch);
-  }, [dispatch]);
+  // useEffect(() => {
+  //   loginByToken(() => {})(dispatch);
+  // }, [dispatch]);
 
   if (loadLogin) {
     return <BubbleLoader />;

@@ -123,7 +123,7 @@ class Cloud {
     callback: Callback<T>,
     schema?: ZodObject | ZodArray
   ) {
-    let url = `${getApiHost(endpoint)}/${endpoint}`;
+    let url = `${getApiHost()}/${endpoint}`;
     const headers = this.getDefaultHeaders(endpoint);
 
     const config: RequestInit = {

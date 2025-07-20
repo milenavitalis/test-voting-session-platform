@@ -1,5 +1,6 @@
 import ErrorLayout from "@/layouts/error-layout";
 import LoginLayout from "@/layouts/login-layout";
+import RegisterLayout from "@/layouts/register-layout";
 import ProtectedRoute from "./protected-route";
 
 export const routes = [
@@ -9,7 +10,7 @@ export const routes = [
   },
   {
     path: "/register",
-    element: <div>Register</div>,
+    element: <RegisterLayout />,
   },
   {
     path: "/home",

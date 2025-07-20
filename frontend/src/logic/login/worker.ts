@@ -3,6 +3,8 @@ import {
   Login,
   LoginCallbackSchema,
   LoginSchema,
+  RegisterCallbackSchema,
+  RegisterSchema,
   type LoginCallback,
 } from "@/common/schemas/login";
 import { Callback } from "@/common/schemas/types";
@@ -26,4 +28,19 @@ export function loginByToken(callback: Callback<LoginCallback>) {
   }
 
   cloud.get("v1/login/token", { token }, callback, LoginCallbackSchema);
+}
+
+export function register(data: Login, callback: Callback<LoginCallback>) {
+  const { data: parsedData, success, error } = RegisterSchema.safeParse(data);
+
+  if (!success) return handleZodError(error, callback);
+
+  const { name, cpf, password } = parsedData;
+
+  cloud.post(
+    "v1/register",
+    { name, cpf, password },
+    callback,
+    RegisterCallbackSchema
+  );
 }
