@@ -2,6 +2,13 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
+from sqlalchemy import Enum
+import enum
+
+class SessionStatusEnum(str, enum.Enum):
+    pending = "pending"
+    open = "open"
+    close = "close"
 
 class Topic(Base):
     __tablename__ = "topics"
@@ -20,7 +27,7 @@ class Session(Base):
     topic_id = Column(Integer, ForeignKey("topics.id"), nullable=False)
     start_time = Column(DateTime(timezone=True), server_default=func.now())
     duration_minutes = Column(Integer, default=1)
-    is_active = Column(Boolean, default=True)
+    status = Column(Enum(SessionStatusEnum, name="sessionstatusenum"), nullable=False)
 
     topic = relationship("Topic", back_populates="sessions")
     votes = relationship("Vote", back_populates="session", cascade="all, delete-orphan")

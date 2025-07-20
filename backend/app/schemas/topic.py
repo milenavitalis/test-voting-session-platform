@@ -6,11 +6,14 @@ class TopicCreate(BaseModel):
     title: str
     description: Optional[str]
 
+    class Config:
+     orm_mode = True
 class TopicOut(BaseModel):
     id: int
     title: str
     description: Optional[str]
     created_at: datetime
+    status: Optional[str] = None
 
     class Config:
         orm_mode = True
