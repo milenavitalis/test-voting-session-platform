@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import router
+from app.routes import login, topic
 from app.database import create_tables, test_connection
 from contextlib import asynccontextmanager
 
@@ -24,4 +24,5 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router)
+app.include_router(login.router)
+app.include_router(topic.router)
