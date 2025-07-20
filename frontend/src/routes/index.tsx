@@ -5,17 +5,21 @@ import ProtectedRoute from "./protected-route";
 
 export const routes = [
   {
-    path: "/login",
+    path: "/auth/login",
     element: <LoginLayout />,
   },
   {
-    path: "/register",
+    path: "/auth/register",
     element: <RegisterLayout />,
   },
   {
     path: "/home",
     element: <ProtectedRoute Element={() => <div>Home</div>} />,
     children: [
+      {
+        path: "dashboard",
+        element: <ProtectedRoute Element={() => <div>Dashboard</div>} />,
+      },
       {
         path: "create-session",
         element: <ProtectedRoute Element={() => <div>Create Session</div>} />,

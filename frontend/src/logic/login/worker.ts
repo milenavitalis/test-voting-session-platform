@@ -27,7 +27,7 @@ export function loginByToken(callback: Callback<LoginCallback>) {
     return callback(undefined, { msg: "Token não encontrado" });
   }
 
-  cloud.get("v1/login/token", { token }, callback, LoginCallbackSchema);
+  cloud.get("v1/auth/me", { token }, callback, LoginCallbackSchema);
 }
 
 export function register(data: Login, callback: Callback<LoginCallback>) {

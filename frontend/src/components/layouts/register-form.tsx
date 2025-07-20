@@ -64,15 +64,18 @@ export function RegisterForm({
   };
 
   const handleSignUp = () => {
-    actions.register({
-      name,
-      cpf: cleanCpf(cpf),
-      password,
-    })(dispatch);
+    actions.register(
+      {
+        name,
+        cpf: cleanCpf(cpf),
+        password,
+      },
+      () => navigate("/home/dashboard")
+    )(dispatch);
   };
 
   const handleLoginNavigate = () => {
-    navigate("/login");
+    navigate("/auth/login");
   };
 
   return (

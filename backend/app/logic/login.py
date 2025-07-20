@@ -33,3 +33,19 @@ def create_access_token(data: dict):
     print("Token JWT criado com sucesso!")
     return encoded_jwt
 
+async def get_user_by_token(token: str, db):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        cpf: str = payload.get("sub")
+        if cpf is None:
+            raise ValueError("Token inválido")
+    except jwt.JWTError:
+        raise ValueError("Token inválido")
+
+    cpf = clean_cpf(cpf)
+    result = await db.execute(select(User).where(User.cpf == cpf))
+    user = result.scalars().first()
+    if not user:
+        raise ValueError("Usuário não encontrado")
+    return user
+

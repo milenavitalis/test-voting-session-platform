@@ -50,11 +50,13 @@ export function LoginForm({ className, value, ...props }: LoginFormProps) {
   };
 
   const handleSignUpNavigate = () => {
-    navigate("/register");
+    navigate("/auth/register");
   };
 
   const handleSubmit = () => {
-    actions.login({ cpf: cleanCpf(cpf), password })(dispatch);
+    actions.login({ cpf: cleanCpf(cpf), password }, () =>
+      navigate("/home/dashboard")
+    )(dispatch);
   };
 
   return (
