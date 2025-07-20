@@ -7,6 +7,7 @@ import { loginByToken } from "@/logic/login/actions";
 import type { RootState } from "./logic/reducer";
 import { toast } from "sonner";
 import cloud from "@/infra/cloud";
+import { setToken } from "./logic/login/slice";
 
 function App() {
   const dispatch = useDispatch();
@@ -14,38 +15,27 @@ function App() {
   const token = useSelector((state: RootState) => state.login.token);
   const [checkingToken, setCheckingToken] = useState(true);
   const router = createBrowserRouter(routes);
-  const hasCalledLoginByToken = useRef(false);
 
   useEffect(() => {
     const cookieToken = cloud.getTokenUser();
 
-    const checkAuth = async () => {
-      if (!token && cookieToken && !hasCalledLoginByToken.current) {
-        hasCalledLoginByToken.current = true;
-        loginByToken(() => {
-          setCheckingToken(false);
-        })(dispatch);
-        return;
+    if (
+      !cookieToken &&
+      !window.location.pathname.match(/\/auth\//) &&
+      !window.location.pathname.match(/\/register\//)
+    ) {
+      toast.error("Você precisa estar logado para acessar esta página.");
+
+      setTimeout(() => {
+        window.location.href = "/auth/login";
+      }, 4000);
+    } else {
+      if (cookieToken) {
+        dispatch(setToken(cookieToken));
       }
-
-      if (
-        !token &&
-        !cookieToken &&
-        !window.location.pathname.match(/\/auth\//) &&
-        !window.location.pathname.match(/\/register\//)
-      ) {
-        toast.error("Direcionado para a página de login");
-
-        setTimeout(() => {
-          window.location.href = "/auth/login";
-        }, 5000);
-      } else {
-        setCheckingToken(false);
-      }
-    };
-
-    checkAuth();
-  }, [dispatch, token]);
+      setCheckingToken(false);
+    }
+  }, []);
 
   if (loadLogin || checkingToken) {
     return <BubbleLoader />;

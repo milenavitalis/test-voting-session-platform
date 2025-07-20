@@ -2,6 +2,7 @@ import ErrorLayout from "@/layouts/error-layout";
 import LoginLayout from "@/layouts/login-layout";
 import RegisterLayout from "@/layouts/register-layout";
 import ProtectedRoute from "./protected-route";
+import MainLayout from "@/layouts/main-layout";
 
 export const routes = [
   {
@@ -14,7 +15,7 @@ export const routes = [
   },
   {
     path: "/home",
-    element: <ProtectedRoute Element={() => <div>Home</div>} />,
+    element: <ProtectedRoute Element={() => <MainLayout />} />,
     children: [
       {
         path: "dashboard",
