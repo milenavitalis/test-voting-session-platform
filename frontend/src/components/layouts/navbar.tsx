@@ -1,3 +1,4 @@
+import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -11,18 +12,19 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Vote } from "lucide-react";
-import { RootState } from "@/logic/reducer";
-import { useSelector } from "react-redux";
+import * as actions from "@/logic/login/actions";
 
 const navigationLinks = [
-  { href: "/home/dashboard", label: "Pautas" },
   { href: "/home/resultados", label: "Resultados" },
   { href: "/home/votar", label: "Votar" },
 ];
 
 export default function Navbar() {
-  const user = useSelector((state: RootState) => state.user.user);
-  const userName = user.name || "Usuário";
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    actions.logout()(dispatch);
+  };
 
   return (
     <header className="border-b px-4 md:px-6">
@@ -97,7 +99,11 @@ export default function Navbar() {
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <Button size="sm" className="w-full cursor-pointer">
+          <Button
+            size="sm"
+            className="w-full cursor-pointer"
+            onClick={handleLogout}
+          >
             Sair
           </Button>
         </div>

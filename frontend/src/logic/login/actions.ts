@@ -29,6 +29,7 @@ export const login =
         dispatch(LoginSlice.setLoadLogin(false));
         if (error || !response) {
           callback?.(undefined, error);
+          toast.error("Erro ao fazer login, tente novamente");
           return logoutAndClearUser()(dispatch);
         }
         dispatch(UserSlice.setUser(response));
@@ -38,27 +39,9 @@ export const login =
         callback?.(response, undefined);
       });
     } catch (error) {
+      toast.error("Erro ao fazer login, tente novamente");
       return logoutAndClearUser()(dispatch);
     }
-  };
-
-export const loginByToken =
-  (callback?: () => void) => (dispatch: AppDispatch) => {
-    dispatch(LoginSlice.setLoadLogin(true));
-    Worker.loginByToken((response, error) => {
-      dispatch(LoginSlice.setLoadLogin(false));
-      console.log("loginByToken response:", response, "error:", error);
-      if (error || !response) {
-        cloud.setTokenUser(undefined);
-        dispatch(LoginSlice.setToken(null));
-        return logout()(dispatch);
-      }
-      dispatch(UserSlice.setUser(response));
-      dispatch(LoginSlice.setToken(response.access_token));
-
-      cloud.setTokenUser(response.access_token);
-      if (callback) callback();
-    });
   };
 
 export const logout = () => (dispatch: AppDispatch) => {
@@ -66,23 +49,22 @@ export const logout = () => (dispatch: AppDispatch) => {
 };
 
 const logoutAndClearUser = () => (dispatch: AppDispatch) => {
-  toast.error("Erro ao fazer login, tente novamente");
   dispatch(LoginSlice.setLoadLogin(false));
   dispatch(LoginSlice.setToken(null));
   dispatch(UserSlice.clearUser());
-  cloud.setTokenUser(undefined);
+  cloud.setTokenUser(null);
 };
 
 export const register =
   (data: Register, callback: Callback<RegisterCallback>) =>
   (dispatch: AppDispatch) => {
     dispatch(LoginSlice.setLoadRegister(true));
-    console.log("Registering user with data:", data);
 
     Worker.register(data, (response, error) => {
       dispatch(LoginSlice.setLoadRegister(false));
       if (error || !response) {
         callback?.(undefined, error);
+        toast.error("Erro ao fazer login, tente novamente");
         return logoutAndClearUser()(dispatch);
       }
       dispatch(UserSlice.setUser(response));

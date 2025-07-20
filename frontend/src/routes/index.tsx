@@ -3,6 +3,7 @@ import LoginLayout from "@/layouts/login-layout";
 import RegisterLayout from "@/layouts/register-layout";
 import ProtectedRoute from "./protected-route";
 import MainLayout from "@/layouts/main-layout";
+import Dashboard from "@/pages/dashboard";
 
 export const routes = [
   {
@@ -19,7 +20,7 @@ export const routes = [
     children: [
       {
         path: "dashboard",
-        element: <ProtectedRoute Element={() => <div>Dashboard</div>} />,
+        element: <ProtectedRoute Element={() => <Dashboard />} />,
       },
       {
         path: "create-session",

@@ -20,16 +20,6 @@ export function login(data: Login, callback: Callback<LoginCallback>) {
   cloud.post("v1/login", { cpf, password }, callback, LoginCallbackSchema);
 }
 
-export function loginByToken(callback: Callback<LoginCallback>) {
-  const token = cloud.getTokenUser();
-
-  if (!token) {
-    return callback(undefined, { msg: "Token não encontrado" });
-  }
-
-  cloud.get("v1/auth/me", { token }, callback, LoginCallbackSchema);
-}
-
 export function register(data: Login, callback: Callback<LoginCallback>) {
   const { data: parsedData, success, error } = RegisterSchema.safeParse(data);
 

@@ -13,7 +13,7 @@ class Cloud {
   public getTokenUser() {
     return this.tokenUser;
   }
-  public setTokenUser(token?: string) {
+  public setTokenUser(token: string | null) {
     this.tokenUser = token ?? null;
 
     if (token) {
