@@ -4,12 +4,18 @@ import { Callback } from "@/common/schemas/types";
 import { validateApiError } from "@/common/utils/apiError";
 import { getApiHost } from "@/infra/config";
 
+type UnauthorizedHandler = () => void;
 class Cloud {
   private tokenUser: string | null;
+  private onUnauthorized: UnauthorizedHandler | null = null;
 
   constructor() {
     this.tokenUser = Cookie.get("tokenUser") || null;
   }
+  public registerUnauthorizedHandler(fn: UnauthorizedHandler) {
+    this.onUnauthorized = fn;
+  }
+
   public getTokenUser() {
     return this.tokenUser;
   }
@@ -154,10 +160,15 @@ class Cloud {
           .then((data) => {
             console.log("response", data);
 
-            if (response.ok) {
-              finalCallback(data);
+            if (!response.ok) {
+              if (response.status === 401) {
+                this.setTokenUser(null);
+                this.onUnauthorized?.();
+              } else {
+                finalCallback(undefined, data);
+              }
             } else {
-              finalCallback(undefined, data);
+              finalCallback(data);
             }
           })
           .catch((error) => {

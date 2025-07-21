@@ -7,6 +7,7 @@ from app.models import User
 from fastapi import HTTPException
 from app.logic.utils import clean_cpf 
 import bcrypt
+from fastapi import HTTPException, status
 
 load_dotenv()
 
@@ -38,9 +39,9 @@ async def get_user_by_token(token: str, db):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         cpf: str = payload.get("sub")
         if cpf is None:
-            raise ValueError("Token inválido")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
     except jwt.JWTError:
-        raise ValueError("Token inválido")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
 
     cpf = clean_cpf(cpf)
     result = await db.execute(select(User).where(User.cpf == cpf))

@@ -4,6 +4,8 @@ import RegisterLayout from "@/layouts/register-layout";
 import ProtectedRoute from "./protected-route";
 import MainLayout from "@/layouts/main-layout";
 import Dashboard from "@/pages/dashboard";
+import Vote from "@/pages/vote";
+import SuccessPage from "@/pages/vote/sucess";
 
 export const routes = [
   {
@@ -23,24 +25,16 @@ export const routes = [
         element: <ProtectedRoute Element={() => <Dashboard />} />,
       },
       {
-        path: "create-session",
-        element: <ProtectedRoute Element={() => <div>Create Session</div>} />,
+        path: "vote",
+        element: <ProtectedRoute Element={() => <Vote />} />,
       },
       {
-        path: "create-agenda",
-        element: <ProtectedRoute Element={() => <div>Create Agenda</div>} />,
-      },
-      {
-        path: "topics",
-        element: <ProtectedRoute Element={() => <div>Topics</div>} />,
-      },
-      {
-        path: "topics/:id/vote",
-        element: <ProtectedRoute Element={() => <div>Vote on Topic</div>} />,
-      },
-      {
-        path: "topics/:id/result",
+        path: "result",
         element: <ProtectedRoute Element={() => <div>Results</div>} />,
+      },
+      {
+        path: "success",
+        element: <ProtectedRoute Element={() => <SuccessPage />} />,
       },
     ],
   },

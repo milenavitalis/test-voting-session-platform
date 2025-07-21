@@ -28,7 +28,6 @@ async def register(user: UserCreate, db: Session = Depends(get_db)):
             "id": created_user.id,
             "name": created_user.name,
             "access_token": token,
-            "token_type": "bearer"
         }
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -38,7 +37,7 @@ async def login(credentials: UserLogin, db: Session = Depends(get_db)):
     try:
         user = await authenticate_user(credentials, db)
         token = create_access_token({"sub": user.cpf})
-        return {"access_token": token, "token_type": "bearer", "id": user.id, "name": user.name}
+        return {"access_token": token, "id": user.id, "name": user.name}
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
     
@@ -56,7 +55,6 @@ async def login_by_token(
             "name": user.name,
             "cpf": user.cpf,
             "access_token": token,
-            "token_type": "bearer"
         }
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
