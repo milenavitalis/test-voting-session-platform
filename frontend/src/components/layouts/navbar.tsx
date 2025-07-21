@@ -1,4 +1,5 @@
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -15,15 +16,20 @@ import { Vote } from "lucide-react";
 import * as actions from "@/logic/login/actions";
 
 const navigationLinks = [
-  { href: "/home/resultados", label: "Resultados" },
-  { href: "/home/votar", label: "Votar" },
+  { href: "/home/vote", label: "Votar" },
+  { href: "/home/result", label: "Resultados" },
 ];
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleLogout = () => {
     actions.logout()(dispatch);
+  };
+
+  const redirectToDashboard = () => {
+    return navigate("dashboard");
   };
 
   return (
@@ -68,10 +74,14 @@ export default function Navbar() {
               <NavigationMenu className="max-w-none *:w-full">
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                   {navigationLinks.map((link, index) => (
-                    <NavigationMenuItem key={index} className="w-full">
-                      <NavigationMenuLink href={link.href} className="py-1.5">
+                    <NavigationMenuItem key={index}>
+                      <Button
+                        variant="ghost"
+                        className="text-muted-foreground hover:text-primary py-1.5 font-medium"
+                        onClick={() => navigate(link.href)}
+                      >
                         {link.label}
-                      </NavigationMenuLink>
+                      </Button>
                     </NavigationMenuItem>
                   ))}
                 </NavigationMenuList>
@@ -79,19 +89,25 @@ export default function Navbar() {
             </PopoverContent>
           </Popover>
           <div className="flex items-center gap-6">
-            <a href="#" className="text-primary hover:text-primary/90">
+            <Button
+              variant="ghost"
+              className="cursor-pointer"
+              size="sm"
+              onClick={redirectToDashboard}
+            >
               <Vote className="size-6" />
-            </a>
+            </Button>
             <NavigationMenu className="max-md:hidden">
               <NavigationMenuList className="gap-2">
                 {navigationLinks.map((link, index) => (
                   <NavigationMenuItem key={index}>
-                    <NavigationMenuLink
-                      href={link.href}
+                    <Button
+                      variant="ghost"
                       className="text-muted-foreground hover:text-primary py-1.5 font-medium"
+                      onClick={() => navigate(link.href)}
                     >
                       {link.label}
-                    </NavigationMenuLink>
+                    </Button>
                   </NavigationMenuItem>
                 ))}
               </NavigationMenuList>

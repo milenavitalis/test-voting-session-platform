@@ -33,7 +33,6 @@ export const TopicWithSessionStatus = TopicCallbackSchema.extend({
 
 export const VoteSchema = z.object({
   vote: z.enum(["Sim", "Não"]),
-  session_id: z.number(),
   topic_id: z.number(),
 });
 

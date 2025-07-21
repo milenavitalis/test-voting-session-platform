@@ -33,7 +33,6 @@ const Dashboard = () => {
   }));
 
   const handleSelectTopic = (item: TopicCallback) => {
-    console.log("item", item);
     setOpenSession(true);
     setItem(item);
   };
@@ -43,7 +42,6 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    console.log("sendo chamado");
     actions.getTopics(() => {})(dispatch);
   }, [dispatch]);
 

@@ -5,6 +5,7 @@ import SimpleDialog from "@/components/common/simple-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import * as actions from "@/logic/topic/actions";
 
 interface DialogOpenSessionProps {
@@ -22,10 +23,21 @@ const DialogOpenSession = ({ open, setOpen, item }: DialogOpenSessionProps) => {
   };
 
   const handleOpenSession = () => {
+    if (duration < 0) {
+      toast.error("Por favor, insira uma duração válida");
+      return;
+    }
     actions.openVotingSession(
       { duration_minutes: duration, topic_id: item.id },
       () => handleClose()
     )(dispatch);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === "" || /^[1-9]\d*$/.test(value)) {
+      setDuration(value === "" ? 0 : parseInt(value, 10));
+    }
   };
 
   return (
@@ -42,7 +54,7 @@ const DialogOpenSession = ({ open, setOpen, item }: DialogOpenSessionProps) => {
             id="duration_minutes"
             type="number"
             value={duration}
-            onChange={(e) => setDuration(Number(e.target.value))}
+            onChange={(e) => handleChange(e)}
           />
         </div>
 

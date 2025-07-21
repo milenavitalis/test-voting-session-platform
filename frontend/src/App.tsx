@@ -3,7 +3,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { routes } from "@/routes";
 import BubbleLoader from "@/components/layouts/loader";
-import { loginByToken } from "@/logic/login/actions";
 import type { RootState } from "./logic/reducer";
 import { toast } from "sonner";
 import cloud from "@/infra/cloud";
