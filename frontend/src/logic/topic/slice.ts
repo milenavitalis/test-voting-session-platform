@@ -58,7 +58,6 @@ const userSlice = createSlice({
       state.session = action.payload;
     },
     updateTopicStatus(state, action: PayloadAction<SessionCallback>) {
-      console.log("state.topics", state.topics, "action", action.payload);
       if (!state.topics || !action.payload) return;
       state.topics = state.topics.map((topic) => {
         if (topic.id === action.payload.topic_id) {

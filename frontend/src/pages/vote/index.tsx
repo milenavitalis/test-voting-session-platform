@@ -35,7 +35,6 @@ const Vote = () => {
       }
     )(dispatch);
   };
-  console.log("config", value);
   return (
     <div className="p-4 gap-8 flex flex-col min-h-screen">
       <div className="gap-3 flex flex-col">

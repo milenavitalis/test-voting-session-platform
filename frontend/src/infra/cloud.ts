@@ -158,8 +158,6 @@ class Cloud {
         response
           .json()
           .then((data) => {
-            console.log("response", data);
-
             if (!response.ok) {
               if (response.status === 401) {
                 this.setTokenUser(null);
@@ -172,14 +170,10 @@ class Cloud {
             }
           })
           .catch((error) => {
-            console.log("error1", error);
-
             finalCallback(undefined, { msg: "Erro ao processar resposta" });
           })
       )
       .catch((error) => {
-        console.log("error2", error);
-
         finalCallback(undefined, { msg: "Erro ao processar resposta" });
       });
   }
