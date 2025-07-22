@@ -1,7 +1,8 @@
 import React from "react";
 import { RegisterForm } from "@/components/layouts/register-form";
 
-const LoginLayout: React.FC = () => {
+const RegisterLayout: React.FC = () => {
+  console.log("teste");
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
@@ -11,4 +12,4 @@ const LoginLayout: React.FC = () => {
   );
 };
 
-export default LoginLayout;
+export default RegisterLayout;

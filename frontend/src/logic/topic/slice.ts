@@ -3,6 +3,7 @@ import {
   TopicListCallback,
   SessionCallback,
   VoteCallback,
+  Result,
 } from "@/common/schemas";
 
 type TopicState = {
@@ -13,7 +14,7 @@ type TopicState = {
   loadVote: boolean;
   vote: VoteCallback | null;
   loadVoteResult: boolean;
-  voteResult: VoteCallback | null;
+  voteResult: Result | null;
 };
 
 const initialState: TopicState = {
@@ -33,7 +34,7 @@ const possibleStatus = {
   close: "Sessão encerrada",
 };
 
-const userSlice = createSlice({
+const topicSlicer = createSlice({
   name: "topic",
   initialState,
   reducers: {
@@ -58,7 +59,6 @@ const userSlice = createSlice({
       state.session = action.payload;
     },
     updateTopicStatus(state, action: PayloadAction<SessionCallback>) {
-      console.log("state.topics", state.topics, "action", action.payload);
       if (!state.topics || !action.payload) return;
       state.topics = state.topics.map((topic) => {
         if (topic.id === action.payload.topic_id) {
@@ -79,7 +79,7 @@ const userSlice = createSlice({
     setLoadVoteResult(state, action: PayloadAction<boolean>) {
       state.loadVoteResult = action.payload;
     },
-    setVoteResult(state, action: PayloadAction<VoteCallback | null>) {
+    setVoteResult(state, action: PayloadAction<Result | null>) {
       state.voteResult = action.payload;
     },
   },
@@ -96,5 +96,5 @@ export const {
   setVote,
   setLoadVoteResult,
   setVoteResult,
-} = userSlice.actions;
-export const topicReducer = userSlice.reducer;
+} = topicSlicer.actions;
+export const topicReducer = topicSlicer.reducer;

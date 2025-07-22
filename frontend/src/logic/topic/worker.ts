@@ -7,6 +7,7 @@ import {
   SessionCallbackSchema,
   VoteSchema,
   VoteCallbackSchema,
+  ResultSchema,
   type Topic,
   type TopicCallback,
   type TopicListCallback,
@@ -14,6 +15,7 @@ import {
   type SessionCallback,
   type VoteCreate,
   type VoteCallback,
+  type Result,
 } from "@/common/schemas/topic";
 import { Callback } from "@/common/schemas/types";
 import { handleZodError } from "@/common/utils/apiError";
@@ -66,9 +68,6 @@ export const createVote = (
   );
 };
 
-export const getVoteResult = (
-  topicId: number,
-  callback: Callback<VoteCallback>
-) => {
-  cloud.get(`v1/topics/${topicId}/result`, {}, callback, VoteCallbackSchema);
+export const getVoteResult = (topicId: number, callback: Callback<Result>) => {
+  cloud.get(`v1/topics/${topicId}/result`, {}, callback, ResultSchema);
 };

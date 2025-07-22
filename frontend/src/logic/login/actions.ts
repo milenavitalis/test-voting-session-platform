@@ -67,10 +67,9 @@ export const register =
         toast.error("Erro ao fazer login, tente novamente");
         return logoutAndClearUser()(dispatch);
       }
+      cloud.setTokenUser(response.access_token);
       dispatch(UserSlice.setUser(response));
       dispatch(LoginSlice.setToken(response.access_token));
       callback?.(response, undefined);
-
-      cloud.setTokenUser(response.access_token);
     });
   };

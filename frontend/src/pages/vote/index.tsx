@@ -5,7 +5,6 @@ import type { RootState } from "@/logic/reducer";
 import SelectTopic from "@/components/common/vote/select-topic";
 import SelectVote from "@/components/common/vote/select-vote";
 import { Button } from "@/components/ui/button";
-import SuccessPage from "./sucess";
 import * as actions from "@/logic/topic/actions";
 
 const Vote = () => {
@@ -35,7 +34,7 @@ const Vote = () => {
       }
     )(dispatch);
   };
-  console.log("config", value);
+
   return (
     <div className="p-4 gap-8 flex flex-col min-h-screen">
       <div className="gap-3 flex flex-col">
