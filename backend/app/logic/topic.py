@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import joinedload
-from app.models.topic import Topic, Session, Vote, SessionStatusEnum
+from app.models.topic import Topic, Session, Vote,  calculate_session_status
 from app.schemas.topic import TopicCreate, TopicOut 
 from app.models.user import User
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, and_
+from app.schemas.topic import SessionResponse
 
 
 async def create_topic(data: TopicCreate, db: AsyncSession):
@@ -19,22 +20,6 @@ async def create_topic(data: TopicCreate, db: AsyncSession):
         "created_at": topic.created_at,
         "status": "Aguardando Abertura",
     }
-async def update_session_status(session: Session, db: AsyncSession):
-    now = datetime.now(timezone.utc) .replace(tzinfo=timezone.utc)
-    end_time = session.start_time + timedelta(minutes=session.duration_minutes)
-
-    if session.status == SessionStatusEnum.close:
-        return
-
-    if session.status == SessionStatusEnum.pending and now >= session.start_time:
-        session.status = SessionStatusEnum.open
-        db.add(session)
-        await db.commit()
-
-    if session.status == SessionStatusEnum.open and now > end_time:
-        session.status = SessionStatusEnum.close
-        db.add(session)
-        await db.commit()
 
 async def list_topics(db: AsyncSession):
     result = await db.execute(
@@ -44,18 +29,18 @@ async def list_topics(db: AsyncSession):
     )
     topics = result.unique().scalars().all()
 
-    for topic in topics:
-        for session in topic.sessions:
-            await update_session_status(session, db)
-
-    def get_status(topic: Topic) -> str:
+    def get_topic_status(topic: Topic) -> str:
         if not topic.sessions:
             return "pending"
-        has_open = any(session.status == SessionStatusEnum.open for session in topic.sessions)
-        has_pending = any(session.status == SessionStatusEnum.pending for session in topic.sessions)
-        if has_open:
+        
+        statuses = [
+            calculate_session_status(s.start_time, s.finish_time)
+            for s in topic.sessions
+        ]
+
+        if "open" in statuses:
             return "open"
-        elif has_pending:
+        elif "pending" in statuses:
             return "pending"
         else:
             return "close"
@@ -66,54 +51,55 @@ async def list_topics(db: AsyncSession):
             title=topic.title,
             description=topic.description,
             created_at=topic.created_at,
-            status=get_status(topic),
+            status=get_topic_status(topic),
         )
         for topic in topics
     ]
 
-
 async def open_session(topic_id: int, duration_minutes: int, db: AsyncSession):
-    # Verificar se existe sessão aberta
-    q = select(Session).where(
-        Session.topic_id == topic_id,
-        Session.status == SessionStatusEnum.open
+    # Verifica se já existe sessão ativa
+    result = await db.execute(
+        select(Session).where(
+            Session.topic_id == topic_id
+        )
     )
-    result = await db.execute(q)
-    active_session = result.scalars().first()
-    if active_session:
-        raise ValueError("Sessão já está aberta para essa pauta")
+    existing_sessions = result.scalars().all()
+
+    for session in existing_sessions:
+        if calculate_session_status(session.start_time, session.finish_time) == "open":
+            raise ValueError("Sessão já está aberta para essa pauta")
+
+    start_time = datetime.now(timezone.utc)
+    finish_time = start_time + timedelta(minutes=duration_minutes or 1)
 
     session = Session(
         topic_id=topic_id,
         duration_minutes=duration_minutes,
-        status=SessionStatusEnum.open,
-        start_time=datetime.now(timezone.utc).replace(tzinfo=timezone.utc)
+        start_time=start_time,
+        finish_time=finish_time
     )
     db.add(session)
     await db.commit()
     await db.refresh(session)
-    return session
+    return SessionResponse.session_with_status(session)
 
 async def vote(topic_id: int, user_id: int, vote_value: str, db: AsyncSession):
-    now = datetime.now(timezone.utc).replace(tzinfo=timezone.utc)
-    # Buscar sessão ativa para a pauta
-    q = select(Session).where(
-        Session.topic_id == topic_id,
-        Session.status == SessionStatusEnum.open
+    now = datetime.now(timezone.utc)
+
+    # Buscar sessão com status "open"
+    result = await db.execute(
+        select(Session).where(Session.topic_id == topic_id)
     )
-    result = await db.execute(q)
-    session = result.scalars().first()
+    sessions = result.scalars().all()
+
+    session = next(
+        (s for s in sessions if calculate_session_status(s.start_time, s.finish_time) == "open"),
+        None
+    )
     if not session:
         raise ValueError("Sessão de votação não está aberta para essa pauta")
 
-    end_time = session.start_time + timedelta(minutes=session.duration_minutes)
-    if now > end_time:
-        session.status = SessionStatusEnum.close
-        db.add(session)
-        await db.commit()
-        raise ValueError("Sessão de votação já foi encerrada")
-
-    # Verificar se o usuário já votou nessa sessão
+    # Verifica se o usuário já votou
     q = select(Vote).where(
         Vote.session_id == session.id,
         Vote.user_id == user_id
@@ -130,45 +116,43 @@ async def vote(topic_id: int, user_id: int, vote_value: str, db: AsyncSession):
     return vote
 
 async def get_result(topic_id: int, db: AsyncSession):
-    # Buscar todas as sessões da pauta
+    # Buscar todas as sessões da pauta ordenadas pela mais recente
     result = await db.execute(
-        select(Session).where(Session.topic_id == topic_id)
+        select(Session)
+        .where(Session.topic_id == topic_id)
+        .order_by(Session.finish_time.desc())
     )
     sessions = result.scalars().all()
+
     if not sessions:
         raise ValueError("Nenhuma sessão encontrada para essa pauta")
 
-    now = datetime.now(timezone.utc)
-
-    # Filtrar sessões que já foram encerradas com base em start_time + duration
+    # Filtrar sessões encerradas (status = "close")
     closed_sessions = [
         s for s in sessions
-        if now > s.start_time + timedelta(minutes=s.duration_minutes)
+        if calculate_session_status(s.start_time, s.finish_time) == "close"
     ]
 
     if not closed_sessions:
         raise ValueError("Nenhuma sessão encerrada ainda para essa pauta")
 
-    # Ordenar pela data de encerramento mais recente
-    most_recent_session = sorted(
-        closed_sessions,
-        key=lambda s: s.start_time + timedelta(minutes=s.duration_minutes),
-        reverse=True
-    )[0]
+    # Pegar a mais recente entre as encerradas
+    most_recent_session = closed_sessions[0]
 
-    # Contar votos SIM e NÃO apenas dessa sessão encerrada
-    q = select(func.count(Vote.id)).where(
+    # Contar votos "Sim"
+    q_sim = select(func.count(Vote.id)).where(
         Vote.session_id == most_recent_session.id,
         Vote.vote == "Sim"
     )
-    positive_result = await db.execute(q)
+    positive_result = await db.execute(q_sim)
     positive_count = positive_result.scalar() or 0
 
-    q = select(func.count(Vote.id)).where(
+    # Contar votos "Não"
+    q_nao = select(func.count(Vote.id)).where(
         Vote.session_id == most_recent_session.id,
         Vote.vote == "Não"
     )
-    negative_result = await db.execute(q)
+    negative_result = await db.execute(q_nao)
     negative_count = negative_result.scalar() or 0
 
     return {

@@ -3,12 +3,18 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
 from sqlalchemy import Enum
+from datetime import datetime, timezone
 import enum
 
-class SessionStatusEnum(str, enum.Enum):
-    pending = "pending"
-    open = "open"
-    close = "close"
+def calculate_session_status(start_time, finish_time):
+    now = datetime.now(timezone.utc)
+    if now < start_time:
+        return "pending"
+    elif start_time <= now <= finish_time:
+        return "open"
+    else:
+        return "close"
+
 
 class Topic(Base):
     __tablename__ = "topics"
@@ -27,7 +33,7 @@ class Session(Base):
     topic_id = Column(Integer, ForeignKey("topics.id"), nullable=False)
     start_time = Column(DateTime(timezone=True), server_default=func.now())
     duration_minutes = Column(Integer, default=1)
-    status = Column(Enum(SessionStatusEnum, name="sessionstatusenum"), nullable=False)
+    finish_time = Column(DateTime(timezone=True), nullable=False)
 
     topic = relationship("Topic", back_populates="sessions")
     votes = relationship("Vote", back_populates="session", cascade="all, delete-orphan")
