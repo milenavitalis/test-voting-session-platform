@@ -19,25 +19,6 @@ Desenvolver uma aplicação Web FullStack para gerenciamento de sessões de vota
 
 ---
 
-## Requisitos Funcionais
-
-### Backend (API RESTful)
-
-- Endpoint `POST /register`: cadastro simples de usuário (name, cpf, password).
-- Endpoint `POST /login`: recebe cpf e password, valida e retorna token JWT.
-- Endpoints de pauta e voto protegidos por token JWT (exceto listagem pública).
-- Gerenciamento de pautas, sessões de votação, registro e resultados de votos conforme o enunciado.
-
-### Frontend (React.js + Redux)
-
-- Tela de login e registro.
-- Dashboard de pautas com seus status.
-- Tela para votar em pauta com sessão aberta.
-- Tela para resultados.
-- Estado da aplicação gerenciado por Redux, incluindo autenticação e dados.
-
----
-
 ## Como rodar a aplicação
 
 A aplicação está toda containerizada e orquestrada via Docker Compose. Basta ter Docker e Docker Compose instalados.
