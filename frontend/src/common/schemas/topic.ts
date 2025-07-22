@@ -8,7 +8,7 @@ export const TopicSchema = z.object({
 export const TopicCallbackSchema = TopicSchema.extend({
   id: z.number(),
   status: z.string(),
-  created_at: z.string(),
+  created_at: z.string().optional(),
 });
 
 export const TopicListCallbackSchema = z.array(TopicCallbackSchema);
@@ -41,6 +41,11 @@ export const VoteCallbackSchema = VoteSchema.extend({
   user_id: z.number(),
 });
 
+export const ResultSchema = z.object({
+  positive_count: z.number(),
+  negative_count: z.number(),
+});
+
 export type Topic = z.infer<typeof TopicSchema>;
 export type TopicCallback = z.infer<typeof TopicCallbackSchema>;
 export type TopicListCallback = z.infer<typeof TopicListCallbackSchema>;
@@ -48,3 +53,4 @@ export type Session = z.infer<typeof SessionSchema>;
 export type SessionCallback = z.infer<typeof SessionCallbackSchema>;
 export type VoteCreate = z.infer<typeof VoteSchema>;
 export type VoteCallback = z.infer<typeof VoteCallbackSchema>;
+export type Result = z.infer<typeof ResultSchema>;
