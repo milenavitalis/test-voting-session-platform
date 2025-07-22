@@ -6,6 +6,8 @@ import MainLayout from "@/layouts/main-layout";
 import Dashboard from "@/pages/dashboard";
 import Vote from "@/pages/vote";
 import SuccessPage from "@/pages/vote/sucess";
+import Results from "@/pages/results";
+import ResultVote from "@/pages/result-vote";
 
 export const routes = [
   {
@@ -30,7 +32,11 @@ export const routes = [
       },
       {
         path: "result",
-        element: <ProtectedRoute Element={() => <div>Results</div>} />,
+        element: <ProtectedRoute Element={() => <Results />} />,
+      },
+      {
+        path: "result/:topic_id",
+        element: <ProtectedRoute Element={() => <ResultVote />} />,
       },
       {
         path: "success",

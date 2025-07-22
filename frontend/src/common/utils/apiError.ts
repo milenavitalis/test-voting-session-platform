@@ -9,7 +9,8 @@ export function validateApiError(
 ) {
   return (data: unknown, error?: ApiError) => {
     if (error) {
-      toastError();
+      console.log("error -->", error);
+      toastError(error.detail);
       return callback(undefined, error);
     }
 
@@ -18,11 +19,12 @@ export function validateApiError(
       return callback(validated);
     } catch (error: unknown) {
       if (error instanceof $ZodError) {
+        console.log("error", error.message);
         toastError();
         handleZodError(error, callback);
       } else {
         toastError();
-        callback(undefined, { msg: "Erro desconhecido", details: error });
+        callback(undefined, { detail: "Erro desconhecido" });
       }
     }
   };
@@ -30,10 +32,10 @@ export function validateApiError(
 
 export function handleZodError(error: $ZodError, callback: Callback<any>) {
   callback(undefined, {
-    msg: "Erro ao validar dados",
+    detail: "Erro ao validar dados",
   });
 }
 
-const toastError = () => {
-  toast.error("Ocorreu um erro");
+const toastError = (msg?: string) => {
+  toast.error(msg || "Ocorreu um erro");
 };

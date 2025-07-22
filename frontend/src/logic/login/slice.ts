@@ -23,7 +23,7 @@ const loginSlice = createSlice({
       state.token = action.payload;
     },
     setLoadRegister(state, action: PayloadAction<boolean>) {
-      state.loadLogin = action.payload;
+      state.loadRegister = action.payload;
     },
   },
 });

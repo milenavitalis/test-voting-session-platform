@@ -170,11 +170,15 @@ class Cloud {
             }
           })
           .catch((error) => {
-            finalCallback(undefined, { msg: "Erro ao processar resposta" });
+            console.log("error1", error);
+
+            finalCallback(undefined, { detail: "Erro ao processar resposta" });
           })
       )
       .catch((error) => {
-        finalCallback(undefined, { msg: "Erro ao processar resposta" });
+        console.log("error2", error);
+
+        finalCallback(undefined, { detail: "Erro ao processar resposta" });
       });
   }
 }

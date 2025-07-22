@@ -8,8 +8,8 @@ import {
   type SessionCallback,
   type VoteCreate,
   type VoteCallback,
+  type Result,
 } from "@/common/schemas/topic";
-import { toast } from "sonner";
 
 import type { AppDispatch } from "@/logic/reducer";
 import { Callback } from "@/common/schemas";
@@ -75,10 +75,9 @@ export const createVote =
   };
 
 export const getVoteResult =
-  (topicId: number, callback: Callback<VoteCallback>) =>
-  (dispatch: AppDispatch) => {
+  (topic_id: number, callback: Callback<Result>) => (dispatch: AppDispatch) => {
     dispatch(TopicSlice.setLoadVoteResult(true));
-    Worker.getVoteResult(topicId, (response, error) => {
+    Worker.getVoteResult(topic_id, (response, error) => {
       dispatch(TopicSlice.setLoadVoteResult(false));
       if (error || !response) {
         callback?.(undefined, error);

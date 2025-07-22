@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import type { RootState } from "@/logic/reducer";
 import {
   Select,
@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TopicCallback } from "@/common/schemas";
 
 interface SelectOptionProps {
   value: { topic_id: number | null; vote: "Sim" | "Não" | "" };

@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-from sqlalchemy import select, func
 from sqlalchemy.orm import joinedload
 from app.models.topic import Topic, Session, Vote, SessionStatusEnum
 from app.schemas.topic import TopicCreate, TopicOut 
@@ -122,7 +121,7 @@ async def vote(topic_id: int, user_id: int, vote_value: str, db: AsyncSession):
     result = await db.execute(q)
     existing_vote = result.scalars().first()
     if existing_vote:
-        raise ValueError("Usuário já votou nessa pauta")
+        raise ValueError("Pauta já votada pelo usuário")
 
     vote = Vote(session_id=session.id, topic_id=topic_id, user_id=user_id, vote=vote_value)
     db.add(vote)
@@ -131,20 +130,49 @@ async def vote(topic_id: int, user_id: int, vote_value: str, db: AsyncSession):
     return vote
 
 async def get_result(topic_id: int, db: AsyncSession):
-    # Buscar sessão (passada ou ativa) para a pauta
-    q = select(Session).where(Session.topic_id == topic_id)
-    result = await db.execute(q)
-    session = result.scalars().first()
-    if not session:
+    # Buscar todas as sessões da pauta
+    result = await db.execute(
+        select(Session).where(Session.topic_id == topic_id)
+    )
+    sessions = result.scalars().all()
+    if not sessions:
         raise ValueError("Nenhuma sessão encontrada para essa pauta")
 
-    # Contar votos sim e não
-    q = select(func.count(Vote.id)).where(Vote.topic_id == topic_id, Vote.vote == "Sim")
+    now = datetime.now(timezone.utc)
+
+    # Filtrar sessões que já foram encerradas com base em start_time + duration
+    closed_sessions = [
+        s for s in sessions
+        if now > s.start_time + timedelta(minutes=s.duration_minutes)
+    ]
+
+    if not closed_sessions:
+        raise ValueError("Nenhuma sessão encerrada ainda para essa pauta")
+
+    # Ordenar pela data de encerramento mais recente
+    most_recent_session = sorted(
+        closed_sessions,
+        key=lambda s: s.start_time + timedelta(minutes=s.duration_minutes),
+        reverse=True
+    )[0]
+
+    # Contar votos SIM e NÃO apenas dessa sessão encerrada
+    q = select(func.count(Vote.id)).where(
+        Vote.session_id == most_recent_session.id,
+        Vote.vote == "Sim"
+    )
     positive_result = await db.execute(q)
     positive_count = positive_result.scalar() or 0
 
-    q = select(func.count(Vote.id)).where(Vote.topic_id == topic_id, Vote.vote == "Não")
+    q = select(func.count(Vote.id)).where(
+        Vote.session_id == most_recent_session.id,
+        Vote.vote == "Não"
+    )
     negative_result = await db.execute(q)
     negative_count = negative_result.scalar() or 0
 
-    return {"sim": positive_count, "nao": negative_count}
+    return {
+        "positive_count": positive_count,
+        "negative_count": negative_count,
+        "session_id": most_recent_session.id,
+    }

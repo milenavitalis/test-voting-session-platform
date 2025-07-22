@@ -17,7 +17,6 @@ function App() {
 
   useEffect(() => {
     const cookieToken = cloud.getTokenUser();
-
     if (
       !cookieToken &&
       !window.location.pathname.match(/\/auth\//) &&

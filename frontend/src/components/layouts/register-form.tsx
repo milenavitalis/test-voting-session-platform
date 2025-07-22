@@ -63,19 +63,22 @@ export function RegisterForm({
     setPassword(event.target.value);
   };
 
-  const handleSignUp = () => {
+  const handleSignUp = (e: React.FormEvent) => {
+    e.preventDefault();
     actions.register(
       {
         name,
         cpf: cleanCpf(cpf),
         password,
       },
-      () => navigate("/home/dashboard")
+      () => {
+        navigate("/home/dashboard");
+      }
     )(dispatch);
   };
 
   const handleLoginNavigate = () => {
-    navigate("/auth/login");
+    return navigate("/auth/login");
   };
 
   return (
@@ -88,7 +91,7 @@ export function RegisterForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSignUp}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
                 <Label htmlFor="name">Nome</Label>
@@ -128,7 +131,7 @@ export function RegisterForm({
                 <Button
                   type="submit"
                   className="w-full"
-                  onClick={handleSignUp}
+                  // onClick={handleSignUp}
                   disabled={disabled}
                 >
                   Inscreva-se

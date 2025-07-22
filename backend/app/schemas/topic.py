@@ -25,5 +25,5 @@ class VoteCreate(BaseModel):
     vote: str  
 
 class VoteResult(BaseModel):
-    sim: int
-    nao: int
+    positive_count: int
+    negative_count: int
