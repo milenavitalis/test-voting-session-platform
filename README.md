@@ -94,39 +94,39 @@ A solução ideal envolveria o isolamento completo das sessões e uso de banco d
 
 ### User
 
-Campo Tipo Observações
-id Integer Chave primária
-name String
-cpf String Único e indexado
-password_hash String Hash com bcrypt
+- Campo Tipo Observações
+- id Integer Chave primária
+- name String
+- cpf String Único e indexado
+- password_hash String Hash com bcrypt
 
 ### Topic
 
-Campo Tipo Observações
-id Integer Chave primária
-title String Obrigatório
-description String Opcional
-created_at DateTime Criado automaticamente
+- Campo Tipo Observações
+- id Integer Chave primária
+- title String Obrigatório
+- description String Opcional
+- created_at DateTime Criado automaticamente
 
 ### Session
 
-Campo Tipo Observações
-id Integer Chave primária
-topic_id FK Relacionado ao tópico
-start_time DateTime Início da sessão
-duration_minutes Integer Default: 1 minuto
-finish_time DateTime Fim da sessão
+- Campo Tipo Observações
+- id Integer Chave primária
+- topic_id FK Relacionado ao tópico
+- start_time DateTime Início da sessão
+- duration_minutes Integer Default: 1 minuto
+- finish_time DateTime Fim da sessão
 
 ### Vote
 
-Campo Tipo Observações
-id Integer Chave primária
-session_id FK Sessão correspondente
-topic_id FK Redundância para facilitar queries
-user_id FK Usuário que votou
-vote String "Sim" ou "Não"
+- Campo Tipo Observações
+- id Integer Chave primária
+- session_id FK Sessão correspondente
+- topic_id FK Redundância para facilitar queries
+- user_id FK Usuário que votou
+- vote String "Sim" ou "Não"
 
 ### Observações Importantes
 
 O arquivo .env foi comitado no repositório apenas para facilitar os testes e a avaliação
-Testei também fazer a consulta para a API externa, mas estava retornando erro 404 Not Found - [text](https://user-info.herokuapp.com/users/{cpf})
+Testei também fazer a consulta para a API externa, mas estava retornando erro 404 Not Found - (https://user-info.herokuapp.com/users/{cpf})
