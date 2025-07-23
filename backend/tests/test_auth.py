@@ -79,3 +79,22 @@ async def test_get_user_by_token_invalid_token(mock_db_session):
     invalid_token = "invalid.token.value"
     with pytest.raises(Exception):
         await get_user_by_token(invalid_token, mock_db_session)
+
+@pytest.mark.asyncio
+async def test_get_user_by_token_user_not_found(mocker):
+    # Mocker sem retorno de usuário
+    mock = mocker.AsyncMock()
+
+    async def execute(_):
+        class Result:
+            def scalars(self):
+                class Scalar:
+                    def first(self): return None
+                return Scalar()
+        return Result()
+    mock.execute.side_effect = execute
+
+    token = create_access_token({"sub": "12345678909"})
+
+    with pytest.raises(ValueError, match="Usuário não encontrado"):
+        await get_user_by_token(token, mock)

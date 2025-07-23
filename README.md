@@ -19,6 +19,15 @@ Desenvolver uma aplicação Web FullStack para gerenciamento de sessões de vota
 
 ---
 
+## Funcionalidades
+
+- Criação de Tópicos
+- Abertura de Sessões com tempo configurável
+- Votação "Sim" ou "Não" dentro do tempo permitido
+- Cadastro e autenticação de usuários via CPF + senha (bcrypt + JWT)
+
+---
+
 ## Como rodar a aplicação
 
 A aplicação está toda containerizada e orquestrada via Docker Compose. Basta ter Docker e Docker Compose instalados.
@@ -33,6 +42,10 @@ Se quiser rodar apenas o backend com os testes (por exemplo), rode:
 ```bash
 docker compose up --build backend-test
 ```
+
+Frontend rodando em: http://localhost:5173
+Backend rodando em: http://localhost:8000
+Swagger disponível em: http://localhost:8000/docs
 
 ### Testes Unitários
 
@@ -59,6 +72,59 @@ docker compose up --build backend-test
   Criar uma tarefa agendada (cron job) para fechar automaticamente as sessões que atingirem o tempo definido, evitando necessidade de ação manual.
 - Notificação em tempo real:
   Implementar WebSocket para notificar usuários assim que a sessão de votação fechar, trazendo interação instantânea na UI.
+
+  Durante o desenvolvimento e execução dos testes unitários, encontrei dificuldades relacionadas à execução concorrente das operações assíncronas com o banco de dados PostgreSQL usando SQLAlchemy AsyncSession e asyncpg.
+
+Erros observados:
+
+- sqlalchemy.exc.InterfaceError: cannot perform operation: another operation is in progress
+
+Possível causa:
+
+- Reutilização incorreta da mesma instância de conexão (db) entre múltiplos testes ou múltiplas await chamadas em sequência sem controle
+
+- Sessão AsyncSession mal encerrada ou mal gerenciada nos testes
+
+- Falta de um mock adequado ou isolamento completo do banco para testes
+
+Solução ideal:
+A solução ideal envolveria o isolamento completo das sessões e uso de banco dedicado ou in-memory para testes, como sqlite+aiosqlite.
+
+### Estrutura do Banco
+
+# User
+
+Campo Tipo Observações
+id Integer Chave primária
+name String
+cpf String Único e indexado
+password_hash String Hash com bcrypt
+
+# Topic
+
+Campo Tipo Observações
+id Integer Chave primária
+title String Obrigatório
+description String Opcional
+created_at DateTime Criado automaticamente
+
+# Session
+
+Campo Tipo Observações
+id Integer Chave primária
+topic_id FK Relacionado ao tópico
+start_time DateTime Início da sessão
+duration_minutes Integer Default: 1 minuto
+finish_time DateTime Fim da sessão
+
+# Vote
+
+Campo Tipo Observações
+id Integer Chave primária
+session_id FK Sessão correspondente
+topic_id FK Redundância para facilitar queries
+user_id FK Usuário que votou
+vote String "Sim" ou "Não"
 
 ### Observações Importantes
 

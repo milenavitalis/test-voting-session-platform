@@ -2,9 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
-from sqlalchemy import Enum
 from datetime import datetime, timezone
-import enum
 
 def calculate_session_status(start_time, finish_time):
     now = datetime.now(timezone.utc)
