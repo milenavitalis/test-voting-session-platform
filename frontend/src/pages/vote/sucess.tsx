@@ -10,7 +10,7 @@ const SuccessPage = () => {
   };
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-4 p-4">
-      <h1 className="text-4xl font-bold text-center">Parabéns!</h1>
+      <h1 className="text-4xl font-bold text-center">Voto registrado!</h1>
       <p className="text-lg text-center">
         Seu voto foi registrado com sucesso.
       </p>

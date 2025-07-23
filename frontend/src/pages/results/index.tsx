@@ -48,11 +48,16 @@ const Results = () => {
         title="Tópicos com sessão encerrada"
         description="Selecione um tópico para visualizar a votação"
       />
-      <TableWithDividers
-        headerOptions={headerOptions}
-        rowOptions={rowOptions}
-        onClick={handleSelectTopic}
-      />
+      {closeTopics.length > 0 && (
+        <TableWithDividers
+          headerOptions={headerOptions}
+          rowOptions={rowOptions}
+          onClick={handleSelectTopic}
+        />
+      )}
+      {closeTopics.length === 0 && (
+        <div className="py-2">Nenhum tópico encerrado.</div>
+      )}
     </div>
   );
 };
