@@ -64,11 +64,7 @@ Swagger disponível em: http://localhost:8000/docs
 ### Dívidas Técnicas e Próximos Passos
 
 - Melhorias nos testes:
-  Aumentar a cobertura, incluir testes de integração, mocks de serviços externos e simulação de concorrência.
-- Validação externa de associado:
-  Integrar consulta à API externa para validar se o CPF do associado está apto a votar.
-- Automação de fechamento de sessões:
-  Criar uma tarefa agendada (cron job) para fechar automaticamente as sessões que atingirem o tempo definido, evitando necessidade de ação manual.
+ - Aumentar a cobertura, incluir testes de integração, mocks de serviços externos e simulação de concorrência.
 - Notificação em tempo real:
   Implementar WebSocket para notificar usuários assim que a sessão de votação fechar, trazendo interação instantânea na UI.
 
