@@ -1,4 +1,4 @@
-# Plataforma Digital de Sessões de Votação Cooperativista
+# Plataforma Digital de Sessões de Votação
 
 ## Contexto do Negócio
 
@@ -92,7 +92,7 @@ A solução ideal envolveria o isolamento completo das sessões e uso de banco d
 
 ### Estrutura do Banco
 
-# User
+### User
 
 Campo Tipo Observações
 id Integer Chave primária
@@ -100,7 +100,7 @@ name String
 cpf String Único e indexado
 password_hash String Hash com bcrypt
 
-# Topic
+### Topic
 
 Campo Tipo Observações
 id Integer Chave primária
@@ -108,7 +108,7 @@ title String Obrigatório
 description String Opcional
 created_at DateTime Criado automaticamente
 
-# Session
+### Session
 
 Campo Tipo Observações
 id Integer Chave primária
@@ -117,7 +117,7 @@ start_time DateTime Início da sessão
 duration_minutes Integer Default: 1 minuto
 finish_time DateTime Fim da sessão
 
-# Vote
+### Vote
 
 Campo Tipo Observações
 id Integer Chave primária
