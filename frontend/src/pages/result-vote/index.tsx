@@ -5,6 +5,7 @@ import type { RootState } from "@/logic/reducer";
 import Header from "@/components/common/header";
 import BubbleLoader from "@/components/layouts/loader";
 import CountVote from "@/components/common/result-vote/count-vote";
+import BarChart from "@/components/common/result-vote/bar-chart";
 
 const ResultVote = () => {
   const navigate = useNavigate();
@@ -22,10 +23,6 @@ const ResultVote = () => {
     }
   }, [topics, loadTopics, loadVoteResult, navigate]);
 
-  if (loadTopics || loadVoteResult) {
-    return <BubbleLoader />;
-  }
-
   if (!voteResult) {
     return;
   }
@@ -33,10 +30,11 @@ const ResultVote = () => {
     <div className="p-4 gap-3 flex flex-col min-h-screen">
       <Header
         title="Resultado da votação"
-        description="Veja o resultado da votação da última sessão"
+        description="Confira o resultado da última sessão de votação"
       />
       <CountVote count={voteResult.positive_count} title="Votos positivos" />
       <CountVote count={voteResult.negative_count} title="Votos negativos" />
+      <BarChart data={voteResult} />
     </div>
   );
 };

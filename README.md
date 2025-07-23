@@ -129,3 +129,4 @@ vote String "Sim" ou "Não"
 ### Observações Importantes
 
 O arquivo .env foi comitado no repositório apenas para facilitar os testes e a avaliação
+Testei também fazer a consulta para a API externa, mas estava retornando erro 404 Not Found - [text](https://user-info.herokuapp.com/users/{cpf})

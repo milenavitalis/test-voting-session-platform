@@ -5,7 +5,7 @@ interface HeaderProps {
 
 const Header = ({ title, description }: HeaderProps) => {
   return (
-    <div className="gap-3 flex flex-col">
+    <div className="gap-1 flex flex-col">
       <div className="font-bold text-lg">{title}</div>
       <div className="text-muted-foreground">{description}</div>
     </div>
