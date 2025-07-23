@@ -4,7 +4,6 @@
 
 No modelo de cooperativismo, decisões importantes são tomadas em assembleias por meio de votação.  
 Esta plataforma digital visa modernizar esse processo, permitindo que associados participem de votações remotamente, de forma segura e transparente.  
-Nosso objetivo é construir o coração dessa plataforma.
 
 ---
 
